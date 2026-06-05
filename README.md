@@ -1,5 +1,7 @@
 # 🩻 X-Ray Scan Analyzer
 
+**🔗 Live Demo: [x-rays-scan-analyzer-8tuq2bcemf2w9ybwcrtwrd.streamlit.app](https://x-rays-scan-analyzer-8tuq2bcemf2w9ybwcrtwrd.streamlit.app/)**
+
 An AI-powered medical imaging assistant that analyzes X-rays and MRI scans and provides structured radiological reports — plus a plain English summary for patients.
 
 ## What It Does
@@ -102,4 +104,4 @@ streamlit run app.py
 
 ## Disclaimer
 
-This tool is AI-generated and is not a substitute for professional medical advice. All analysis must be reviewed by a licensed medical professional.g
+This tool is AI-generated and is not a substitute for professional medical advice. All analysis must be reviewed by a licensed medical professional.
