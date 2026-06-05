@@ -1,0 +1,105 @@
+# 🩻 X-Ray Scan Analyzer
+
+An AI-powered medical imaging assistant that analyzes X-rays and MRI scans and provides structured radiological reports — plus a plain English summary for patients.
+
+## What It Does
+
+- Upload an X-ray or MRI scan as an image or PDF
+- Get a detailed clinical analysis structured like a real radiologist's report
+- Simplify the report into plain English so anyone can understand it
+- Supports JPEG, PNG, WebP, and PDF formats
+
+## Tech Stack
+
+- **Python** — core language
+- **Google Gemini 2.5 Flash** — AI vision model for image analysis
+- **Streamlit** — UI framework
+- **Pillow** — image processing
+- **pdf2image + Poppler** — PDF to image conversion
+
+## Project Structure
+
+```
+xray-agent/
+├── assets/
+│   └── mdback.jpg        # background image
+├── brain.py              # AI logic — scan analysis and report simplification
+├── styles.py             # CSS and background styling
+├── app.py                # Streamlit UI
+├── packages.txt          # system dependencies for deployment
+├── requirements.txt      # Python dependencies
+├── .env                  # API key (never committed)
+└── .gitignore
+```
+
+## Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/xray-agent.git
+cd xray-agent
+```
+
+### 2. Create and activate a virtual environment
+
+```bash
+python -m venv venv
+
+# Mac/Linux
+source venv/bin/activate
+
+# Windows
+venv\Scripts\activate
+```
+
+### 3. Install Python dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Install Poppler (required for PDF support)
+
+**Windows:**
+Download from [poppler-windows releases](https://github.com/oschwartz10612/poppler-windows/releases), extract to `C:\poppler`, and add `C:\poppler\Library\bin` to your system PATH.
+
+**Mac:**
+```bash
+brew install poppler
+```
+
+**Linux:**
+```bash
+sudo apt install poppler-utils
+```
+
+### 5. Set up your API key
+
+Create a `.env` file in the root folder:
+
+```
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+Get your free API key at [aistudio.google.com](https://aistudio.google.com).
+
+### 6. Run the app
+
+```bash
+streamlit run app.py
+```
+
+## Deploying to Streamlit Cloud
+
+1. Push your code to GitHub (`.env` is gitignored — never pushed)
+2. Go to [streamlit.io/cloud](https://streamlit.io/cloud) and connect your repo
+3. In **Settings → Secrets**, add:
+   ```
+   GEMINI_API_KEY=your_gemini_api_key_here
+   ```
+4. Streamlit Cloud will automatically install Poppler from `packages.txt`
+
+## Disclaimer
+
+This tool is AI-generated and is not a substitute for professional medical advice. All analysis must be reviewed by a licensed medical professional.g
