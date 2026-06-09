@@ -62,14 +62,22 @@ def analyze_scan(image_bytes , media_type):
     
 
 def simplify_report(report):
-    client = genai.Client(api_key = GEMINI_API_KEY)
+    try:
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        summary = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=[report, PROMPT_2]
+        )
+        return summary.text
 
-    summary = client.models.generate_content(
-        model = "gemini-2.5-flash",
-        contents = [report,PROMPT_2]
-    )
-    return summary.text
-    
+    except Exception as e:
+        error = str(e)
+        if "503" in error or "UNAVAILABLE" in error or "ServerError" in error:
+            return "⚠️ The AI service is temporarily busy. Please wait a moment and try again."
+        elif "429" in error or "RESOURCE_EXHAUSTED" in error:
+            return "⚠️ API quota exceeded. Please try again in a few minutes."
+        else:
+            return f"Simplification failed: {error}"
 
 # safety net
 # if __name__ == "__main__":
