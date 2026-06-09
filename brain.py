@@ -29,7 +29,7 @@ PROMPT_2 = """YOU are the doctor you got the report you can understand the techn
             
             AND always end with 'This analysis is AI-generated and must be reviewed by a licensed medical professional.'"""
 
-# Initialize client once globally
+# Initialize client 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 # extracting image from a pdf
