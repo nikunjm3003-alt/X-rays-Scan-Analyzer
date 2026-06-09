@@ -29,41 +29,39 @@ PROMPT_2 = """YOU are the doctor you got the report you can understand the techn
             
             AND always end with 'This analysis is AI-generated and must be reviewed by a licensed medical professional.'"""
 
-# extracting image from an pdf
+# Initialize client once globally
+client = genai.Client(api_key=GEMINI_API_KEY)
+
+# extracting image from a pdf
 def extract_image_from_pdf(pdf_bytes):
     pages = convert_from_bytes(pdf_bytes, first_page=1, last_page=1)
     return pages[0]
 
 # giving the user response based on whether they are able to upload a file or an image or nothing
-def analyze_scan(image_bytes , media_type):
+def analyze_scan(image_bytes, media_type):
     try:
         if media_type == "application/pdf":
             image = extract_image_from_pdf(image_bytes)
-        elif media_type in ["image/jpeg","image/png","image/webp"]:
+        elif media_type in ["image/jpeg", "image/png", "image/webp"]:
             image = Image.open(io.BytesIO(image_bytes))
-        else :
-            return "Error please upload an image or a pdf"
+        else:
+            return "Error: Please upload a valid image or a PDF."
 
-        client = genai.Client(api_key =GEMINI_API_KEY)
-    
         response = client.models.generate_content(
-            model = "gemini-2.5-flash",
-            contents = [image, PROMPT]
+            model="gemini-2.5-flash",
+            contents=[image, PROMPT]
         )
         return response.text
     except Exception as e:
-        error = str(e)
-        if "503" in error or "UNAVAILABLE" in error:
-            return "The AI service is temporarily busy. Please wait a moment and try again."
-        elif "429" in error or "RESOURCE_EXHAUSTED" in error:
-            return "API quota exceeded. Please try again in a few minutes."
-        else:
-            return f"Analysis failed: {error}"
+        print(f"API Error during analysis: {e}")
+        return None
     
 
 def simplify_report(report):
+    if not report or "failed" in report.lower() or "busy" in report.lower():
+        return None
+        
     try:
-        client = genai.Client(api_key=GEMINI_API_KEY)
         summary = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=[report, PROMPT_2]
@@ -71,17 +69,5 @@ def simplify_report(report):
         return summary.text
 
     except Exception as e:
-        error = str(e)
-        if "503" in error or "UNAVAILABLE" in error or "ServerError" in error:
-            return "⚠️ The AI service is temporarily busy. Please wait a moment and try again."
-        elif "429" in error or "RESOURCE_EXHAUSTED" in error:
-            return "⚠️ API quota exceeded. Please try again in a few minutes."
-        else:
-            return f"Simplification failed: {error}"
-
-# safety net
-# if __name__ == "__main__":
-#     with open("test.jpg", "rb") as f:
-#         image_bytes = f.read()
-#     result = analyze_scan(image_bytes, "image/jpeg")
-#     print(result)
+        print(f"API Error during simplification: {e}")
+        return None

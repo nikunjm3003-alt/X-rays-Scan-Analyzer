@@ -51,7 +51,16 @@ with col1:
             with st.spinner("Analysing your scan..."):
                 image_bytes = uploaded_file.getvalue()
                 media_type = uploaded_file.type
-                st.session_state.analysis_result = analyze_scan(image_bytes, media_type)
+                
+                if "simplified_result" in st.session_state:
+                    del st.session_state.simplified_result
+                
+                raw_analysis = analyze_scan(image_bytes, media_type)
+                
+                if raw_analysis and not raw_analysis.startswith("Error"):
+                    st.session_state.analysis_result = raw_analysis
+                else:
+                    st.error("Could not analyze the scan. The API server might be busy or the file layout is unreadable. Please try again.")
   
 
 with col2:
@@ -68,9 +77,12 @@ if "analysis_result" in st.session_state:
     with center:
         if st.button("Simplify Report", use_container_width=True):
             with st.spinner("Simplifying the report..."):
-                st.session_state.simplified_result = simplify_report(
-                    st.session_state.analysis_result
-                )
+                simplified = simplify_report(st.session_state.analysis_result)
+                
+                if simplified:
+                    st.session_state.simplified_result = simplified
+                else:
+                    st.error("Google's AI backend experienced a temporary hiccup processing this block. Please click the button to try again.")
 
     if "simplified_result" in st.session_state:
         st.subheader("Plain English Summary")
