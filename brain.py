@@ -52,7 +52,13 @@ def analyze_scan(image_bytes , media_type):
         )
         return response.text
     except Exception as e:
-        return f"Error : {e}"
+        error = str(e)
+        if "503" in error or "UNAVAILABLE" in error:
+            return "The AI service is temporarily busy. Please wait a moment and try again."
+        elif "429" in error or "RESOURCE_EXHAUSTED" in error:
+            return "API quota exceeded. Please try again in a few minutes."
+        else:
+            return f"Analysis failed: {error}"
     
 
 def simplify_report(report):
